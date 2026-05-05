@@ -1,0 +1,15 @@
+services:
+  - type: python
+    version: "3.12"
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DEBUG
+        value: False
+      - key: ALLOWED_HOSTS
+        value: your-app.onrender.com
+      - key: DATABASE_URL
+        value: /var/tmp/ports/PORT.render.internal:5432
+    disk:
+      mountPath: /app
+      size: 1

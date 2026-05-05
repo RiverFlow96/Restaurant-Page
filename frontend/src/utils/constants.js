@@ -1,7 +1,22 @@
+<<<<<<< HEAD
 export const RESTAURANT = {
   name: "Koniec - El Fin",
   shortName: "Koniec",
   tagline: "Sabor cubano, alma de острова",
+=======
+<<<<<<< Updated upstream
+export const LISTING_STATUS = {
+  DRAFT: 'draft',
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+  SOLD: 'sold',
+};
+=======
+export const RESTAURANT = {
+  name: "Koniec - El Fin",
+  shortName: "Koniec",
+  tagline: "Sabor cubano, alma de cuba",
+>>>>>>> feature/devops
   phone: "052500167",
   email: "info@koniec.elfin",
   address: {
@@ -23,6 +38,10 @@ export const RESTAURANT = {
   },
   description: "Experimenta la auténtica gastronomía cubana en el corazón de La Habana. Nuestros platos tradicionales, preparados con recetas heredadas y los ingredientes más frescos, te transportarán a la isla de la manera más deliciosa.",
 }
+<<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
+>>>>>>> feature/devops
 
 export const MENU = {
   entrantes: [
