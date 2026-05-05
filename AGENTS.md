@@ -9,11 +9,45 @@
 
 ## Running the Project
 
-### Backend
+### Backend (Local)
 ```bash
 cd backend
-pip install -r requirements.txt  # or: uv pip install -r requirements.txt
+cp .env.example .env  # Configure your environment
+pip install -r requirements.txt
+uv run python manage.py migrate
 uv run python manage.py runserver 0.0.0.0:8000
+```
+
+### Frontend (Local)
+```bash
+cd frontend
+cp .env.example .env  # Configure your environment
+bun install
+bun run dev
+```
+
+---
+
+## Deployment
+
+### Render (Backend)
+```bash
+# Configurar en render.com:
+# - Build Command: pip install -r requirements.txt
+# - Start Command: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+# - Environment Variables (see backend/.env.example)
+```
+
+### Supabase (Database)
+```bash
+# Configurar DATABASE_URL en settings.py
+#或 usar Supabase connection string
+```
+
+### Cloudflare (Frontend)
+```bash
+make build
+wrangler pages deploy frontend/dist
 ```
 
 ### Frontend
