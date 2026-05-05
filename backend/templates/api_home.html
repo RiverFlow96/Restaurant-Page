@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant API</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #0d0d0d; --accent: #c9a456; --bg: #fafafa; --text: #1a1a1a; --text-light: #666; --border: #e5e5e5; --font-display: 'Playfair Display', serif; --font-body: 'DM Sans', sans-serif; }
+        body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; }
+        .hero-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(ellipse at 20% 80%, rgba(201,164,86,0.08) 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, rgba(201,164,86,0.05) 0%, transparent 40%), linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        header { position: fixed; top: 0; left: 0; right: 0; padding: 20px 0; z-index: 100; }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: var(--font-display); font-size: 24px; font-weight: 600; color: var(--primary); text-decoration: none; }
+        .logo span { color: var(--accent); }
+        nav { display: flex; gap: 32px; }
+        nav a { font-size: 14px; font-weight: 500; color: var(--text-light); text-decoration: none; }
+        nav a:hover { color: var(--accent); }
+        main { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 0 80px; }
+        .hero-content { text-align: center; max-width: 800px; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: white; border: 1px solid var(--border); border-radius: 100px; font-size: 12px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 32px; animation: fadeInUp 0.8s forwards; opacity: 0; transform: translateY(20px); }
+        .hero-badge::before { content: ''; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.2)} }
+        .hero-title { font-family: var(--font-display); font-size: clamp(48px,8vw,80px); font-weight: 600; line-height: 1.1; color: var(--primary); letter-spacing: -2px; margin-bottom: 24px; animation: fadeInUp 0.8s 0.1s forwards; opacity: 0; }
+        .hero-title .accent { color: var(--accent); }
+        .hero-description { font-size: 18px; color: var(--text-light); margin: 0 auto 48px; animation: fadeInUp 0.8s 0.2s forwards; opacity: 0; }
+        .hero-actions { display: flex; gap: 16px; justify-content: center; animation: fadeInUp 0.8s 0.3s forwards; opacity: 0; }
+        @keyframes fadeInUp { to{opacity:1;transform:translateY(0)} }
+        .btn { display: inline-flex; padding: 14px 28px; font-size: 14px; font-weight: 600; border-radius: 8px; text-decoration: none; transition: 0.3s; }
+        .btn-primary { background: var(--primary); color: white; border: 1px solid var(--primary); }
+        .btn-primary:hover { background: #1a1a1a; transform: translateY(-2px); }
+        .btn-secondary { background: white; color: var(--primary); border: 1px solid var(--border); }
+        .btn-secondary:hover { border-color: var(--primary); transform: translateY(-2px); }
+        .endpoints-section { padding: 80px 0; }
+        .section-title { font-family: var(--font-display); font-size: 32px; font-weight: 600; text-align: center; margin-bottom: 48px; letter-spacing: -0.5px; }
+        .endpoints-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 24px; }
+        .endpoint-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 32px; text-decoration: none; transition: 0.3s; }
+        .endpoint-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.08); }
+        .endpoint-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: var(--bg); border-radius: 12px; margin-bottom: 20px; font-size: 20px; }
+        .endpoint-card h3 { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--primary); margin-bottom: 8px; }
+        .endpoint-card p { font-size: 14px; color: var(--text-light); margin-bottom: 16px; }
+        .endpoint-method { display: inline-block; padding: 4px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 4px; background: #e8f5e9; color: #2e7d32; }
+        .method-post { background: #e3f2fd; color: #1565c0; }
+        footer { padding: 40px 0; text-align: center; border-top: 1px solid var(--border); }
+        footer p { font-size: 14px; color: #9a9a9a; }
+        @media (max-width:768px){ .hero-actions{flex-direction:column} .endpoints-grid{grid-template-columns:1fr} }
+    </style>
+</head>
+<body>
+    <div class="hero-bg"></div>
+    <header><div class="container header-inner"><a href="/" class="logo">Restaurant <span>API</span></a><nav><a href="/api/docs/">Documentación</a><a href="/admin/">Admin</a></nav></div></header>
+    <main>
+        <div class="hero-content">
+            <div class="hero-badge">API REST</div>
+            <h1 class="hero-title">Restaurant <span class="accent">API</span></h1>
+            <p class="hero-description">API RESTful para gestionar el menú, reservas, galería y reseñas del restaurante.</p>
+            <div class="hero-actions">
+                <a href="/api/v1/restaurant/menu/" class="btn btn-primary">Ver Menú</a>
+                <a href="/api/docs/" class="btn btn-secondary">Documentación</a>
+            </div>
+        </div>
+    </main>
+    <section class="endpoints-section">
+        <div class="container">
+            <h2 class="section-title">Endpoints Disponibles</h2>
+            <div class="endpoints-grid">
+                <a href="/api/v1/restaurant/menu/" class="endpoint-card"><div class="endpoint-icon">🍽️</div><h3>Menú</h3><p>Platos del restaurante</p><span class="endpoint-method">GET</span></a>
+                <a href="/api/v1/restaurant/categories/" class="endpoint-card"><div class="endpoint-icon">📂</div><h3>Categorías</h3><p>Categorías del menú</p><span class="endpoint-method">GET</span></a>
+                <a href="/api/v1/restaurant/reservations/" class="endpoint-card"><div class="endpoint-icon">📅</div><h3>Reservas</h3><p>Sistema de reservas</p><span class="endpoint-method method-post">POST</span></a>
+                <a href="/api/v1/restaurant/gallery/" class="endpoint-card"><div class="endpoint-icon">🖼️</div><h3>Galería</h3><p>Imágenes</p><span class="endpoint-method">GET</span></a>
+                <a href="/api/v1/restaurant/reviews/" class="endpoint-card"><div class="endpoint-icon">⭐</div><h3>Reseñas</h3><p>Opiniones</p><span class="endpoint-method">GET</span></a>
+                <a href="/api/v1/restaurant/contact/" class="endpoint-card"><div class="endpoint-icon">📞</div><h3>Contacto</h3><p>Información</p><span class="endpoint-method">GET</span></a>
+            </div>
+        </div>
+    </section>
+    <footer><p>© 2026 Restaurant API</p></footer>
+</body>
+</html>
