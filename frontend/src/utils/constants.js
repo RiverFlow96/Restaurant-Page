@@ -1,22 +1,7 @@
-<<<<<<< HEAD
 export const RESTAURANT = {
   name: "Koniec - El Fin",
   shortName: "Koniec",
   tagline: "Sabor cubano, alma de острова",
-=======
-<<<<<<< Updated upstream
-export const LISTING_STATUS = {
-  DRAFT: 'draft',
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
-  SOLD: 'sold',
-};
-=======
-export const RESTAURANT = {
-  name: "Koniec - El Fin",
-  shortName: "Koniec",
-  tagline: "Sabor cubano, alma de cuba",
->>>>>>> feature/devops
   phone: "052500167",
   email: "info@koniec.elfin",
   address: {
@@ -38,10 +23,6 @@ export const RESTAURANT = {
   },
   description: "Experimenta la auténtica gastronomía cubana en el corazón de La Habana. Nuestros platos tradicionales, preparados con recetas heredadas y los ingredientes más frescos, te transportarán a la isla de la manera más deliciosa.",
 }
-<<<<<<< HEAD
-=======
->>>>>>> Stashed changes
->>>>>>> feature/devops
 
 export const MENU = {
   entrantes: [
@@ -60,7 +41,7 @@ export const MENU = {
   postres: [
     { name: "Flan de Coconut", desc: "Flan de coco, caramelo dorado", price: "€7" },
     { name: "Pastel de Chocolate", desc: "Bizcocho de chocolate oscuro, frosting de café", price: "€8" },
-    { name: "Arroz con Leche", desc: "Arroz dulce, vainilla, canela", price: "€6" },
+    { name: "Arroz con Leche", desc: "Arroz dulce, vainilla, vainilla", price: "€6" },
     { name: "Tres Leches", desc: "Bizcocho mojado en tres leches, merengue", price: "€7" },
   ],
 }
