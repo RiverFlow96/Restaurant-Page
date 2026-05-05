@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spec: Landing Page Restaurante</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      color: #1a1a1a;
+      background: #fafafa;
+      padding: 40px 20px;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .header h1 { font-size: 28px; font-weight: 700; }
+    .status {
+      background: #ff6b35;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .meta { color: #666; font-size: 14px; }
+    
+    .summary {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .summary h2 { font-size: 14px; color: #666; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .summary p { font-size: 18px; font-weight: 500; }
+    
+    .panel {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .panel h3 { font-size: 16px; margin-bottom: 16px; color: #1a1a1a; }
+    
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+    
+    ul { padding-left: 20px; }
+    li { margin-bottom: 8px; }
+    
+    .metric-table { width: 100%; border-collapse: collapse; }
+    .metric-table th, .metric-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    .metric-table th { background: #f5f5f5; font-size: 12px; text-transform: uppercase; color: #666; }
+    
+    .story {
+      background: #f9f9f9;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border-left: 3px solid #ff6b35;
+    }
+    .story code { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    
+    .phase {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .phase-num {
+      width: 32px;
+      height: 32px;
+      background: #ff6b35;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    
+    .question {
+      padding: 12px 16px;
+      background: #fff3e0;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .assignee {
+      background: #333;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Landing Page Restaurante</h1>
+      <span class="status">Borrador</span>
+      <div class="meta">Mayo 2026 · Propietario: Equipo</div>
+    </header>
+
+    <section class="summary">
+      <h2>Resumen de 3 líneas</h2>
+      <p>Landing page premium para restaurante con reservas online, menú interactivo y experiencia visual inmersiva.</p>
+    </section>
+
+    <section class="panel">
+      <h3>Problema</h3>
+      <p>Los restaurantes actuales tienen webs básicas que no reflejan la experiencia culinaria offerte. Necesitan una landing page que capture la esencia del lugar, facilite reservas y aumente conversiones.</p>
+      <p style="margin-top: 16px; color: #666; font-style: italic;">"Nuestra web actual es genérica y no transmite la experiencia única que ofrecemos a nuestros clientes." — Chef / Dueño</p>
+    </section>
+
+    <section class="two-col">
+      <div class="panel">
+        <h3>✓ Goals</h3>
+        <ul>
+          <li>Hero con video/foto inmersiva del restaurante</li>
+          <li>Sección de menú con precios y fotos</li>
+          <li>Sistema de reservas online integrado</li>
+          <li>Información de contacto y ubicación</li>
+          <li>Diseño responsive para móviles</li>
+          <li>Speed de carga rápido</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>✗ Non-goals</h3>
+        <ul>
+          <li>Carrito de compras/e-commerce</li>
+          <li>Sistema de pedidos a domicilio</li>
+          <li>Blog o noticias</li>
+          <li>Panel de admin</li>
+          <li>Multilenguaje completo</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>Métricas de Éxito</h3>
+      <table class="metric-table">
+        <thead>
+          <tr>
+            <th>Métrica</th>
+            <th>Target</th>
+            <th>Cómo se mide</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Reservas generadas</td>
+            <td>+50%/mes</td>
+            <td>Tracking reservas</td>
+          </tr>
+          <tr>
+            <td>CTR botón reserva</td>
+            <td>>15%</td>
+            <td>Analytics</td>
+          </tr>
+          <tr>
+            <td>LCP (Load time)</td>
+            <td>< 2.5s</td>
+            <td>PageSpeed</td>
+          </tr>
+          <tr>
+            <td>Bounce rate</td>
+            <td>< 40%</td>
+            <td>GA4</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h3>User Stories</h3>
+      <div class="story">
+        <code>Como cliente</code> quiero ver fotos atractivas del lugar y comida <code>para decidir si quiero visitar</code>.
+      </div>
+      <div class="story">
+        <code>Como cliente</code> quiero hacer una reserva desde la web <code>para asegurar mesa</code>.
+      </div>
+      <div class="story">
+        <code>Como cliente</code> quiero ver el menú y precios <code>para saber qué ofrecer</code>.
+      </div>
+      <div class="story">
+        <code>Como cliente</code> quiero ver ubicación ycontacto <code>para llegar al restaurante</code>.
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>Alcance / Fases</h3>
+      <div class="phase">
+        <span class="phase-num">1</span>
+        <div>
+          <strong>Hero + Introducción</strong><br>
+          <span style="color:#666">Video background, valor diferencial, CTA reserva</span>
+        </div>
+      </div>
+      <div class="phase">
+        <span class="phase-num">2</span>
+        <div>
+          <strong>Menú + Galería</strong><br>
+          <span style="color:#666">Sección menu con fotos, galería de imágenes</span>
+        </div>
+      </div>
+      <div class="phase">
+        <span class="phase-num">3</span>
+        <div>
+          <strong>Reservas + Contacto</strong><br>
+          <span style="color:#666">Formulario reservas, info contacto, mapa</span>
+        </div>
+      </div>
+      <div class="phase">
+        <span class="phase-num">4</span>
+        <div>
+          <strong>Optimización</strong><br>
+          <span style="color:#666">SEO, performance, analytics</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>Preguntas Abiertas</h3>
+      <div class="question">
+        <span>¿Qué sistema de reservas usar? (OpenTable, propio, external)</span>
+        <span class="assignee">UX</span>
+      </div>
+      <div class="question">
+        <span>¿Paleta de colores y tipografía?</span>
+        <span class="assignee">Design</span>
+      </div>
+      <div class="question">
+        <span>¿Copywriting del restaurante?</span>
+        <span class="assignee">Marketing</span>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
