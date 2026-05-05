@@ -29,3 +29,15 @@
 - [ ] Escribir copywriting del restaurante
 - [ ] Seleccionar sistema de reservas
 - [ ] Obtener fotos del restaurante
+
+# API
+- [] paginación Agregar : page, page_size a list endpoints
+- [] versionado Agregar : /api/v1/
+- [] Errores inconsistentes : Estandarizar respuestas de error
+- [] Filtros en query params : Documentar ?category=slug&available=true
+- [] HATEOAS : Agregar _links en respuestas
+
+
+
+
+

@@ -1,7 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser
-from django.shortcuts import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
 
 from .models import Category, MenuItem, Reservation, GalleryImage, Review, ContactInfo
 from .serializers import (
@@ -13,21 +14,49 @@ from .serializers import (
 from .permissions import IsPublic, IsPublicOrAdmin
 
 
+class StandardPagination(PageNumberPagination):
+    page_size = 20
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+
+def paginated_response(request, queryset, serializer_class):
+    """Crea respuesta paginada con metadata."""
+    paginator = StandardPagination()
+    page = paginator.paginate_queryset(queryset, request)
+    
+    if page is not None:
+        serializer = serializer_class(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    
+    serializer = serializer_class(queryset, many=True)
+    return Response(serializer.data)
+
+
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsPublic]
+    pagination_class = StandardPagination
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             return [AllowAny()]
         return [IsAdminUser()]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        search = self.request.query_params.get('search')
+        if search:
+            qs = qs.filter(Q(name__icontains=search) | Q(description__icontains=search))
+        return qs
+
 
 class MenuItemViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
     permission_classes = [IsPublic]
+    pagination_class = StandardPagination
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -38,17 +67,21 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         qs = super().get_queryset()
         category = self.request.query_params.get('category')
         available = self.request.query_params.get('available')
+        search = self.request.query_params.get('search')
 
         if category:
             qs = qs.filter(category__slug=category)
         if available is not None:
             qs = qs.filter(available=available.lower() == 'true')
+        if search:
+            qs = qs.filter(Q(name__icontains=search) | Q(description__icontains=search))
         return qs
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
     queryset = Reservation.objects.all()
     permission_classes = [IsPublic]
+    pagination_class = StandardPagination
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -59,6 +92,20 @@ class ReservationViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return [IsAdminUser()]
         return [IsPublic()]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        status_filter = self.request.query_params.get('status')
+        date_from = self.request.query_params.get('date_from')
+        date_to = self.request.query_params.get('date_to')
+
+        if status_filter:
+            qs = qs.filter(status=status_filter)
+        if date_from:
+            qs = qs.filter(date__gte=date_from)
+        if date_to:
+            qs = qs.filter(date__lte=date_to)
+        return qs
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -74,6 +121,7 @@ class GalleryImageViewSet(viewsets.ModelViewSet):
     queryset = GalleryImage.objects.all()
     serializer_class = GalleryImageSerializer
     permission_classes = [IsPublic]
+    pagination_class = StandardPagination
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -84,6 +132,7 @@ class GalleryImageViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     permission_classes = [IsPublic]
+    pagination_class = StandardPagination
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -91,9 +140,14 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return ReviewSerializer
 
     def get_queryset(self):
-        if self.request.user.is_staff:
-            return Review.objects.all()
-        return Review.objects.filter(is_approved=True)
+        qs = super().get_queryset()
+        rating = self.request.query_params.get('rating')
+        
+        if not self.request.user.is_staff:
+            qs = qs.filter(is_approved=True)
+        if rating:
+            qs = qs.filter(rating=rating)
+        return qs
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -117,6 +171,7 @@ class ContactInfoViewSet(viewsets.ModelViewSet):
     serializer_class = ContactInfoSerializer
     permission_classes = [IsPublic]
     http_method_names = ['get', 'post', 'put', 'patch']
+    pagination_class = None
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
