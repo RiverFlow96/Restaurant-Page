@@ -1,18 +1,9 @@
-"""
-Vistas de la API Restaurant con documentación de filtros.
-
-Filtros disponibles por endpoint:
-- /menu/: category, available, search
-- /categories/: search
-- /reservations/: status, date_from, date_to
-- /reviews/: rating
-"""
-
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.filters import OrderingFilter, SearchFilter
 from django.db.models import Q
 
 from .models import Category, MenuItem, Reservation, GalleryImage, Review, ContactInfo
@@ -22,8 +13,8 @@ from .serializers import (
     GalleryImageSerializer, ReviewSerializer, ReviewListSerializer,
     ContactInfoSerializer
 )
-from .permissions import IsPublic, IsPublicOrAdmin
-from .responses import error_response, validation_error, not_found, conflict, success, created
+from .permissions import IsPublic
+from .responses import validation_error, not_found, conflict, success, created
 
 
 class StandardPagination(PageNumberPagination):
@@ -33,59 +24,30 @@ class StandardPagination(PageNumberPagination):
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    """
-    Endpoint: /categories/
-
-    Filtros disponibles:
-    - search: Buscar por nombre o descripción
-    - page: Número de página
-    - page_size: Items por página
-
-    Ejemplos:
-    - GET /api/v1/restaurant/categories/
-    - GET /api/v1/restaurant/categories/?search=entrantes
-    - GET /api/v1/restaurant/categories/?page=2&page_size=10
-    """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsPublic]
     pagination_class = StandardPagination
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'order', 'created_at']
+    ordering = ['order']
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             return [AllowAny()]
         return [IsAdminUser()]
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        search = self.request.query_params.get('search')
-        if search:
-            qs = qs.filter(Q(name__icontains=search) | Q(description__icontains=search))
-        return qs
-
 
 class MenuItemViewSet(viewsets.ModelViewSet):
-    """
-    Endpoint: /menu/
-
-    Filtros disponibles:
-    - category: Filtrar por categoría (slug)
-    - available: Filtrar por disponibilidad (true/false)
-    - search: Buscar por nombre o descripción
-    - page: Número de página
-    - page_size: Items por página
-
-    Ejemplos:
-    - GET /api/v1/restaurant/menu/
-    - GET /api/v1/restaurant/menu/?category=entrantes
-    - GET /api/v1/restaurant/menu/?available=true
-    - GET /api/v1/restaurant/menu/?search=risotto
-    - GET /api/v1/restaurant/menu/?category=platos&available=true
-    """
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
     permission_classes = [IsPublic]
     pagination_class = StandardPagination
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'price', 'order', 'created_at']
+    ordering = ['order']
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -96,41 +58,28 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         qs = super().get_queryset()
         category = self.request.query_params.get('category')
         available = self.request.query_params.get('available')
-        search = self.request.query_params.get('search')
+        price_min = self.request.query_params.get('price_min')
+        price_max = self.request.query_params.get('price_max')
 
         if category:
             qs = qs.filter(category__slug=category)
         if available is not None:
             qs = qs.filter(available=available.lower() == 'true')
-        if search:
-            qs = qs.filter(Q(name__icontains=search) | Q(description__icontains=search))
+        if price_min:
+            qs = qs.filter(price__gte=price_min)
+        if price_max:
+            qs = qs.filter(price__lte=price_max)
         return qs
 
 
 class ReservationViewSet(viewsets.ModelViewSet):
-    """
-    Endpoint: /reservations/
-
-    Crear reserva (público):
-    POST /api/v1/restaurant/reservations/
-    {
-        "name": "Nombre",
-        "email": "email@ejemplo.com",
-        "phone": "+34600000000",
-        "date": "2026-06-01",
-        "time": "20:00",
-        "guests": 2,
-        "special_requests": "Opcional"
-    }
-
-    Filtros (admin):
-    - status: pending, confirmed, cancelled, completed
-    - date_from: Fecha mínima
-    - date_to: Fecha máxima
-    """
     queryset = Reservation.objects.all()
     permission_classes = [IsPublic]
     pagination_class = StandardPagination
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['date', 'time', 'created_at']
+    ordering = ['-created_at']
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -147,6 +96,9 @@ class ReservationViewSet(viewsets.ModelViewSet):
         status_filter = self.request.query_params.get('status')
         date_from = self.request.query_params.get('date_from')
         date_to = self.request.query_params.get('date_to')
+        guests = self.request.query_params.get('guests')
+        guests_min = self.request.query_params.get('guests_min')
+        guests_max = self.request.query_params.get('guests_max')
 
         if status_filter:
             qs = qs.filter(status=status_filter)
@@ -154,6 +106,12 @@ class ReservationViewSet(viewsets.ModelViewSet):
             qs = qs.filter(date__gte=date_from)
         if date_to:
             qs = qs.filter(date__lte=date_to)
+        if guests:
+            qs = qs.filter(guests=guests)
+        if guests_min:
+            qs = qs.filter(guests__gte=guests_min)
+        if guests_max:
+            qs = qs.filter(guests__lte=guests_max)
         return qs
 
     def create(self, request, *args, **kwargs):
@@ -170,20 +128,13 @@ class ReservationViewSet(viewsets.ModelViewSet):
 
 
 class GalleryImageViewSet(viewsets.ModelViewSet):
-    """
-    Endpoint: /gallery/
-
-    Filtros disponibles:
-    - page: Número de página
-    - page_size: Items por página
-
-    Ejemplo:
-    - GET /api/v1/restaurant/gallery/?page=2&page_size=10
-    """
     queryset = GalleryImage.objects.all()
     serializer_class = GalleryImageSerializer
     permission_classes = [IsPublic]
     pagination_class = StandardPagination
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['order', 'created_at']
+    ordering = ['order']
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -192,27 +143,13 @@ class GalleryImageViewSet(viewsets.ModelViewSet):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    """
-    Endpoint: /reviews/
-
-    Crear reseña (público):
-    POST /api/v1/restaurant/reviews/
-    {
-        "client_name": "Nombre",
-        "rating": 5,
-        "comment": "Comentario"
-    }
-
-    Filtros disponibles:
-    - rating: Filtrar por puntuación (1-5)
-
-    Ejemplos:
-    - GET /api/v1/restaurant/reviews/
-    - GET /api/v1/restaurant/reviews/?rating=5
-    """
     queryset = Review.objects.all()
     permission_classes = [IsPublic]
     pagination_class = StandardPagination
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['rating', 'created_at']
+    ordering = ['-created_at']
+    throttle_classes = [AnonRateThrottle]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -222,11 +159,17 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         rating = self.request.query_params.get('rating')
+        rating_min = self.request.query_params.get('rating_min')
+        rating_max = self.request.query_params.get('rating_max')
 
         if not self.request.user.is_staff:
             qs = qs.filter(is_approved=True)
         if rating:
             qs = qs.filter(rating=rating)
+        if rating_min:
+            qs = qs.filter(rating__gte=rating_min)
+        if rating_max:
+            qs = qs.filter(rating__lte=rating_max)
         return qs
 
     def get_permissions(self):
@@ -245,15 +188,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class ContactInfoViewSet(viewsets.ModelViewSet):
-    """
-    Endpoint: /contact/
-
-    GET: Ver información de contacto (público)
-    POST: Crear info de contacto (admin)
-    PUT/PATCH: Actualizar info de contacto (admin)
-
-    Solo permite un registro de contacto.
-    """
     queryset = ContactInfo.objects.all()
     serializer_class = ContactInfoSerializer
     permission_classes = [IsPublic]

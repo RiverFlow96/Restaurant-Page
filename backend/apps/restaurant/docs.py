@@ -5,114 +5,105 @@ Base URL: /api/v1/restaurant/
 
 ---
 
-## Endpoints públicos
+## NUEVO: Documentación Interactiva
 
-### Menu (Menú)
-
-**GET /menu/** - Listar platos del menú
-
-Parámetros de query:
-| Parámetro | Tipo | Descripción | Ejemplo |
-|----------|------|-----------|---------|
-| `page` | int | Página | `?page=1` |
-| `page_size` | int | Items por página (max 100) | `?page_size=20` |
-| `category` | str | Filtrar por categoría (slug) | `?category=entrantes` |
-| `available` | bool | Filtrar por disponibilidad | `?available=true` |
-| `search` | str | Buscar por nombre/descripción | `?search=risotto` |
-
-**GET /menu/{id}/** - Ver plato específico
-
-**POST /menu/** - Crear plato (admin)
-
-**PUT /menu/{id}/** - Actualizar plato (admin)
-
-**DELETE /menu/{id}/** - Eliminar plato (admin)
+Swagger UI: /api/docs/
+Redoc: /api/redoc/
 
 ---
 
-### Categories (Categorías)
+## Rate Limiting
 
-**GET /categories/** - Listar categorías
-
-Parámetros de query:
-| Parámetro | Tipo | Descripción |
-|----------|------|-----------|
-| `search` | str | Buscar por nombre |
-| `page` | int | Página |
-
-**GET /categories/{id}/** - Ver categoría
+| Endpoint | Límite |
+|---------|--------|
+| General (anon) | 100/hour |
+| General (user) | 1000/hour |
+| Reservations | 10/hour |
+| Reviews | 5/hour |
 
 ---
 
-### Reservations (Reservas)
+## Sorting (ordenación)
 
-**POST /reservations/** - Crear reserva
+Parámetro: `?ordering=field` o `?-field` (descendente)
 
-Campos requeridos:
-```json
-{
-    "name": "string",
-    "email": "email@ejemplo.com",
-    "phone": "+34600000000",
-    "date": "2026-06-01",
-    "time": "20:00",
-    "guests": 2
-}
-```
+| Endpoint | Campos disponibles |
+|----------|---------------|
+| `/menu/` | name, price, order, created_at |
+| `/categories/` | name, order, created_at |
+| `/reservations/` | date, time, created_at |
+| `/gallery/` | order, created_at |
+| `/reviews/` | rating, created_at |
 
-Campos opcionales:
-- `special_requests`: "string"
+Ejemplos:
+- `?ordering=price` (menor a mayor)
+- `?ordering=-price` (mayor a menor)
+- `?ordering=-created_at` (más recientes)
 
-Parámetros de query (admin):
+---
+
+## Filtering Avanzado
+
+### Menu
+| Parámetro | Descripción |
+|----------|-----------|
+| `category` | slug de categoría |
+| `available` | true/false |
+| `price_min` | precio mínimo (gte) |
+| `price_max` | precio máximo (lte) |
+| `search` | buscar en nombre/descripción |
+
+### Reservations
 | Parámetro | Descripción |
 |----------|-----------|
 | `status` | pending, confirmed, cancelled, completed |
-| `date_from` | Fecha mínima (YYYY-MM-DD) |
-| `date_to` | Fecha máxima (YYYY-MM-DD) |
+| `date_from` | fecha mínima |
+| `date_to` | fecha máxima |
+| `guests` | número exacto |
+| `guests_min` | mínimo de comensales |
+| `guests_max` | máximo de comensales |
+
+### Reviews
+| Parámetro | Descripción |
+|----------|-----------|
+| `rating` | puntuación exacta |
+| `rating_min` | puntuación mínima |
+| `rating_max` | puntuación máxima |
 
 ---
 
-### Gallery (Galería)
+## Endpoints
+
+### Menu
+
+**GET /menu/** - Listar platos
+**GET /menu/{id}/** - Ver plato
+**POST /menu/** - Crear (admin)
+**PUT /menu/{id}/** - Actualizar (admin)
+**DELETE /menu/{id}/** - Eliminar (admin)
+
+### Categories
+
+**GET /categories/** - Listar categorías
+**GET /categories/{id}/** - Ver categoría
+**POST /categories/** - Crear (admin)
+
+### Reservations
+
+**POST /reservations/** - Crear reserva
+
+### Gallery
 
 **GET /gallery/** - Listar imágenes
 
-Parámetros de query:
-| Parámetro | Tipo | Descripción |
-|----------|------|-----------|
-| `page` | int | Página |
-| `page_size` | int | Items por página |
+### Reviews
 
----
-
-### Reviews (Reseñas)
-
-**GET /reviews/** - Listar reseñas aprobadas
-
-Parámetros de query:
-| Parámetro | Descripción |
-|----------|-----------|
-| `rating` | Filtrar por puntuación (1-5) |
-
+**GET /reviews/** - Listar reseñas
 **POST /reviews/** - Crear reseña
 
-Campos requeridos:
-```json
-{
-    "client_name": "Nombre",
-    "rating": 5,
-    "comment": "Comentario"
-}
-```
+### Contact
 
----
-
-### Contact (Contacto)
-
-**GET /contact/** - Ver información de contacto
-
-**POST /contact/** - Crear info de contacto (admin)
-
-**PUT /contact/** - Actualizar info de contacto (admin)
+**GET /contact/** - Ver contacto
 
 ---
 
@@ -127,7 +118,10 @@ Campos requeridos:
 | 403 | Prohibido |
 | 404 | No encontrado |
 | 422 | Error de validación |
+| 429 | Rate limit excedido |
 | 500 | Error interno |
+
+---
 
 ## Formato de respuesta paginada
 
