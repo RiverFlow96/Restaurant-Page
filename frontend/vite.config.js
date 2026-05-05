@@ -3,7 +3,15 @@ import react from '@vitejs/plugin-react'
 import { copyFileSync } from 'fs'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: 'copy-redirects',
+      closeBundle() {
+        copyFileSync('public/_redirects', 'dist/_redirects')
+      },
+    },
+  ],
   server: {
     port: 5173,
     proxy: {
@@ -17,15 +25,4 @@ export default defineConfig({
       },
     },
   },
-  build: {
-    publicDir: 'public',
-  },
-  plugins: [
-    {
-      name: 'copy-redirects',
-      closeBundle() {
-        copyFileSync('public/_redirects', 'dist/_redirects')
-      },
-    },
-  ],
 })
