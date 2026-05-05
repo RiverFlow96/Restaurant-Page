@@ -4,8 +4,8 @@ compatibility_date = "2024-01-01"
 [build]
 command = "bun run build"
 cwd = "frontend"
-watch_dir = "frontend/dist"
 
-[[env]]
-name = "VITE_API_URL"
-value = "https://your-backend.onrender.com"
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
