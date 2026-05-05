@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, memo } from 'react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
+import Icons from './Icons'
 
-export function Navbar() {
+export const Navbar = memo(function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -12,11 +13,7 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const navLinks = [
-    { to: '#menu', label: 'Menú' },
-    { to: '#galeria', label: 'Galería' },
-    { to: '#reservar', label: 'Reservar' },
-  ]
+  const closeMenu = () => setMenuOpen(false)
 
   return (
     <nav className={clsx(
@@ -29,27 +26,22 @@ export function Navbar() {
         </Link>
         
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
+          {NAV_LINKS.map((link) => (
             <Link key={link.to} to={link.to} className="text-white/80 hover:text-accent transition-colors">
               {link.label}
             </Link>
           ))}
         </div>
         
-        <button className="md:hidden text-white p-2" onClick={() => setMenuOpen(!menuOpen)}>
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {menuOpen 
-              ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /> 
-              : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            }
-          </svg>
+        <button className="md:hidden text-white p-2" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+          {menuOpen ? <Icons.Close className="w-6 h-6" /> : <Icons.Menu className="w-6 h-6" />}
         </button>
       </div>
       
       {menuOpen && (
         <div className="md:hidden bg-primary/95 backdrop-blur-md px-6 pb-4">
-          {navLinks.map((link) => (
-            <Link key={link.to} to={link.to} className="block py-2 text-white/80" onClick={() => setMenuOpen(false)}>
+          {NAV_LINKS.map((link) => (
+            <Link key={link.to} to={link.to} className="block py-2 text-white/80" onClick={closeMenu}>
               {link.label}
             </Link>
           ))}
@@ -57,9 +49,15 @@ export function Navbar() {
       )}
     </nav>
   )
-}
+})
 
-export function Footer() {
+const NAV_LINKS = [
+  { to: '#menu', label: 'Menú' },
+  { to: '#galeria', label: 'Galería' },
+  { to: '#reservar', label: 'Reservar' },
+]
+
+export const Footer = memo(function Footer() {
   const currentYear = new Date().getFullYear()
   
   return (
@@ -71,27 +69,27 @@ export function Footer() {
       </div>
     </footer>
   )
-}
+})
 
-export function Button({ children, variant = 'primary', className, ...props }) {
-  const variants = {
-    primary: 'bg-accent text-primary hover:bg-accent-light',
-    secondary: 'border-2 border-white text-white hover:bg-white/10',
-    ghost: 'text-white/80 hover:text-accent',
-  }
-  
+export const Button = memo(function Button({ children, variant = 'primary', className, ...props }) {
   return (
     <button className={clsx(
       'px-8 py-3 font-semibold rounded transition-colors',
-      variants[variant],
+      BUTTON_VARIANTS[variant],
       className
     )} {...props}>
       {children}
     </button>
   )
+})
+
+const BUTTON_VARIANTS = {
+  primary: 'bg-accent text-primary hover:bg-accent-light',
+  secondary: 'border-2 border-white text-white hover:bg-white/10',
+  ghost: 'text-white/80 hover:text-accent',
 }
 
-export function Reveal({ children, delay = 0 }) {
+export const Reveal = memo(function Reveal({ children, delay = 0 }) {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
 
@@ -119,7 +117,7 @@ export function Reveal({ children, delay = 0 }) {
       {children}
     </div>
   )
-}
+})
 
 export function Section({ children, className, dark = false }) {
   return (

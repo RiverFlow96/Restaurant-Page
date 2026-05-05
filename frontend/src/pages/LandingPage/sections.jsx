@@ -1,8 +1,10 @@
+import { memo } from 'react'
 import { Button, Reveal, Section, Container } from '../../components/ui'
+import Icons from '../../components/ui/Icons'
 import { RESTAURANT, MENU, GALLERY_IMAGES, MENU_TABS } from '../../utils/constants'
 import { useAppStore } from '../../store/appStore'
 
-export function Hero() {
+export const Hero = memo(function Hero() {
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/80 to-primary/40 z-10" />
@@ -36,15 +38,13 @@ export function Hero() {
       </div>
       
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <svg className="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
+        <Icons.ChevronDown className="w-6 h-6 text-white/60" />
       </div>
     </section>
   )
-}
+})
 
-export function About() {
+export const About = memo(function About() {
   return (
     <Section>
       <Reveal>
@@ -71,10 +71,12 @@ export function About() {
       </Reveal>
     </Section>
   )
-}
+})
 
-export function MenuSection() {
+export const MenuSection = memo(function MenuSection() {
   const { menuTab, setMenuTab } = useAppStore()
+  const menuItems = MENU[menuTab]
+  const menuTabs = MENU_TABS
   
   return (
     <Section id="menu" dark>
@@ -88,7 +90,7 @@ export function MenuSection() {
       
       <Reveal delay={150}>
         <div className="flex justify-center gap-2 mb-12 flex-wrap">
-          {MENU_TABS.map((tab) => (
+          {menuTabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setMenuTab(tab.key)}
@@ -105,7 +107,7 @@ export function MenuSection() {
       </Reveal>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {MENU[menuTab].map((item, index) => (
+        {menuItems.map((item, index) => (
           <Reveal key={item.name} delay={index * 100}>
             <div className="bg-white/5 rounded-lg p-6 hover:bg-white/10 transition-colors group">
               <h3 className="font-display text-xl font-semibold text-white mb-2 group-hover:text-accent transition-colors">
@@ -119,9 +121,9 @@ export function MenuSection() {
       </div>
     </Section>
   )
-}
+})
 
-export function Gallery() {
+export const Gallery = memo(function Gallery() {
   return (
     <Section id="galeria">
       <Reveal>
@@ -143,9 +145,9 @@ export function Gallery() {
       </div>
     </Section>
   )
-}
+})
 
-export function Contact() {
+export const Contact = memo(function Contact() {
   return (
     <section className="py-20 md:py-32 bg-bg-dark">
       <Container>
@@ -155,28 +157,21 @@ export function Contact() {
             <div className="grid md:grid-cols-3 gap-8">
               <div className="space-y-2">
                 <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                  <Icons.MapPin className="w-6 h-6 text-accent" />
                 </div>
                 <p className="text-white font-medium">{RESTAURANT.address.full}</p>
                 <p className="text-white/60 text-sm">{RESTAURANT.address.near}</p>
               </div>
               <div className="space-y-2">
                 <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
+                  <Icons.Phone className="w-6 h-6 text-accent" />
                 </div>
                 <a href={`tel:${RESTAURANT.phone}`} className="text-white hover:text-accent transition-colors">{RESTAURANT.phone}</a>
                 <p className="text-white/60 text-sm">Teléfono</p>
               </div>
               <div className="space-y-2">
                 <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <Icons.Clock className="w-6 h-6 text-accent" />
                 </div>
                 <p className="text-white font-medium">{RESTAURANT.hours.daily}</p>
                 <p className="text-white/60 text-sm">{RESTAURANT.hours.days}</p>
@@ -187,4 +182,4 @@ export function Contact() {
       </Container>
     </section>
   )
-}
+})
