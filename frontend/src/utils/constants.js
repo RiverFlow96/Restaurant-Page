@@ -1,7 +1,7 @@
 export const RESTAURANT = {
   name: "Koniec - El Fin",
   shortName: "Koniec",
-  tagline: "Sabor cubano, alma de острова",
+  tagline: "Sabor cubano, alma de cuba",
   phone: "052500167",
   email: "info@koniec.elfin",
   address: {
